@@ -23,10 +23,11 @@ JOKES_FILE = BASE_DIR / "jokes.json"
 ELO_FILE = BASE_DIR / "elo_state.json"
 STATE_LOCK_FILE = ELO_FILE.with_suffix(".lock")
 BENCHMARK_EXPLANATION = (
-    " Funny Arena pairs two jokes from the same category and lets visitors decide which model"
-    " delivered the better punchline. Each click records a head-to-head result, updates the Elo"
+    " Funny Arena pairs two jokes from the same category and lets you decide which model"
+    " is funnier. Each click records a head-to-head result, updates the Elo"
     " ratings, and instantly refreshes the leaderboard."
-    " Jokes categories are picked from https://en.wikipedia.org/wiki/Index_of_joke_types"
+    " Jokes categories are picked from https://en.wikipedia.org/wiki/Index_of_joke_types."
+    " Jokes were created using Openrouter with the template 'Make a '{category}' joke.'"
 )
 
 app = Flask(__name__, static_url_path="/funny-arena/static", static_folder="static")
@@ -159,6 +160,16 @@ def elo_update(elos: dict[str, float], winner: str, loser: str, k: float = 32.0)
     elos[loser] = loser_rating + k * (0 - expected_loser)
 
 
+def elo_draw(elos: dict[str, float], model_a: str, model_b: str, k: float = 32.0) -> None:
+    rating_a = elos[model_a]
+    rating_b = elos[model_b]
+    expected_a = 1 / (1 + 10 ** ((rating_b - rating_a) / 400))
+    expected_b = 1 / (1 + 10 ** ((rating_a - rating_b) / 400))
+
+    elos[model_a] = rating_a + k * (0.5 - expected_a)
+    elos[model_b] = rating_b + k * (0.5 - expected_b)
+
+
 def select_battle() -> dict[str, str | list[dict[str, str | int]]]:
     if not CATEGORY_INDEX:
         raise RuntimeError("No overlapping joke categories with at least two models.")
@@ -211,9 +222,12 @@ def api_battle_result():
     payload = request.get_json(force=True) or {}
     battle_id = payload.get("battle_id")
     winner = payload.get("winner")
+    draw = payload.get("draw")
 
-    if not battle_id or not winner:
-        return jsonify({"error": "battle_id and winner are required."}), 400
+    if not battle_id or (not winner and not draw):
+        return jsonify({"error": "battle_id and winner or draw are required."}), 400
+    if winner and draw:
+        return jsonify({"error": "Provide only a winner or draw, not both."}), 400
 
     with lock:
         battle = ACTIVE_BATTLES.pop(battle_id, None)
@@ -221,13 +235,20 @@ def api_battle_result():
             return jsonify({"error": "Battle expired or unknown."}), 400
 
         contenders = {battle["model_a"], battle["model_b"]}
-        if winner not in contenders:
-            return jsonify({"error": "Winner must be part of the battle."}), 400
+        if draw:
+            state, leaderboard = update_state(
+                lambda elo_state: _record_draw_result(
+                    elo_state, battle["model_a"], battle["model_b"]
+                )
+            )
+        else:
+            if winner not in contenders:
+                return jsonify({"error": "Winner must be part of the battle."}), 400
 
-        loser = (contenders - {winner}).pop()
-        state, leaderboard = update_state(
-            lambda elo_state: _record_battle_result(elo_state, winner, loser)
-        )
+            loser = (contenders - {winner}).pop()
+            state, leaderboard = update_state(
+                lambda elo_state: _record_battle_result(elo_state, winner, loser)
+            )
 
     return jsonify({"leaderboard": leaderboard, "total_votes": state["total_votes"]})
 
@@ -235,6 +256,14 @@ def api_battle_result():
 def _record_battle_result(state: EloState, winner: str, loser: str) -> list[dict[str, str | int | float]]:
     elo_update(state["elos"], winner, loser)
     state["votes"][winner] = state["votes"].get(winner, 0) + 1
+    state["total_votes"] += 1
+    return build_leaderboard(state["elos"], state["votes"])
+
+
+def _record_draw_result(
+    state: EloState, model_a: str, model_b: str
+) -> list[dict[str, str | int | float]]:
+    elo_draw(state["elos"], model_a, model_b)
     state["total_votes"] += 1
     return build_leaderboard(state["elos"], state["votes"])
 

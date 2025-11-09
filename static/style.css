@@ -117,6 +117,27 @@ main {
     margin: 0;
 }
 
+.live-indicator {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+}
+
+.live-dot {
+    width: 0.55rem;
+    height: 0.55rem;
+    border-radius: 50%;
+    background: #ef4444;
+    box-shadow: 0 0 6px rgba(239, 68, 68, 0.9), 0 0 18px rgba(239, 68, 68, 0.4);
+    animation: pulse-glow 1.4s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .live-dot {
+        animation: none;
+    }
+}
+
 .stat-chip {
     display: flex;
     flex-direction: column;
@@ -230,6 +251,38 @@ tbody tr:nth-child(odd) {
     gap: 1rem;
 }
 
+.draw-row {
+    margin-top: 1rem;
+    display: flex;
+    justify-content: center;
+}
+
+.draw-button {
+    border: 1px dashed rgba(255, 255, 255, 0.3);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.02);
+    color: inherit;
+    padding: 0.85rem 1.5rem;
+    font-weight: 600;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: border 0.2s, background 0.2s, color 0.2s;
+    width: min(420px, 100%);
+}
+
+.draw-button:hover,
+.draw-button:focus-visible {
+    border-color: rgba(255, 255, 255, 0.6);
+    background: rgba(255, 255, 255, 0.06);
+}
+
+.draw-button.disabled,
+.draw-button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    border-style: solid;
+}
+
 .joke-card {
     border: 1px solid rgba(255, 255, 255, 0.12);
     border-radius: 0.9rem;
@@ -317,4 +370,18 @@ tbody tr:nth-child(odd) {
 
 .hidden {
     display: none !important;
+}
+
+@keyframes pulse-glow {
+    0%,
+    100% {
+        transform: scale(1);
+        box-shadow: 0 0 6px rgba(239, 68, 68, 0.9), 0 0 18px rgba(239, 68, 68, 0.4);
+        opacity: 0.85;
+    }
+    50% {
+        transform: scale(1.2);
+        box-shadow: 0 0 12px rgba(239, 68, 68, 1), 0 0 28px rgba(239, 68, 68, 0.6);
+        opacity: 1;
+    }
 }

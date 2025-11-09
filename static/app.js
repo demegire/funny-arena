@@ -14,6 +14,7 @@ const categoryPill = document.getElementById("categoryPill");
 const jokeCardsWrapper = document.getElementById("jokeCards");
 const progressPill = document.getElementById("progressPill");
 const progressFill = progressPill?.querySelector(".progress-bar span");
+const drawButton = document.getElementById("drawButton");
 const totalVotesEl = document.getElementById("totalVotes");
 
 async function loadLeaderboard() {
@@ -60,9 +61,11 @@ async function loadBattle() {
         state.locked = false;
         renderBattle();
         hideAdvanceBanner();
+        setDrawButtonDisabled(false);
     } catch (error) {
         jokeCardsWrapper.innerHTML =
             '<button class="joke-card placeholder">Unable to fetch battle.</button>';
+        setDrawButtonDisabled(true);
     }
 }
 
@@ -98,6 +101,7 @@ async function handleVote(event) {
     const winnerId = button.dataset.id;
     revealModels(winnerId);
     disableCards();
+    disableDrawButton();
     showAdvanceBanner();
 
     try {
@@ -122,6 +126,36 @@ async function handleVote(event) {
     }
 }
 
+async function handleDraw() {
+    if (state.locked || !state.battle) return;
+    state.locked = true;
+    revealModels();
+    disableCards();
+    disableDrawButton();
+    showAdvanceBanner();
+
+    try {
+        const response = await fetch(apiUrl("/api/battle_result"), {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ battle_id: state.battle.battle_id, draw: true }),
+        });
+        if (response.ok) {
+            const data = await response.json();
+            state.leaderboard = data.leaderboard ?? [];
+            state.totalVotes = data.total_votes ?? state.totalVotes;
+            totalVotesEl.textContent = formatNumber(state.totalVotes);
+            renderLeaderboard();
+        }
+    } catch (error) {
+        // Ignore network errors, banner already indicates progress
+    } finally {
+        setTimeout(() => {
+            loadBattle();
+        }, 5000);
+    }
+}
+
 function revealModels(selectedId) {
     document.querySelectorAll(".joke-card").forEach((card) => {
         const label = card.querySelector(".assistant-label");
@@ -139,6 +173,16 @@ function disableCards() {
         card.classList.add("disabled");
         card.disabled = true;
     });
+}
+
+function disableDrawButton() {
+    setDrawButtonDisabled(true);
+}
+
+function setDrawButtonDisabled(disabled) {
+    if (!drawButton) return;
+    drawButton.disabled = disabled;
+    drawButton.classList.toggle("disabled", disabled);
 }
 
 function showAdvanceBanner() {
@@ -178,6 +222,7 @@ function setupTabs() {
 
 document.addEventListener("DOMContentLoaded", () => {
     setupTabs();
+    drawButton?.addEventListener("click", handleDraw);
     loadLeaderboard();
     loadBattle();
 });
