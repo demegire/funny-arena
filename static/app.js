@@ -25,7 +25,7 @@ async function loadLeaderboard() {
         state.leaderboard = data.leaderboard ?? [];
         state.totalVotes = data.total_votes ?? state.totalVotes;
         totalVotesEl.textContent = formatNumber(state.totalVotes);
-        benchmarkCopy.textContent = data.explanation ?? "";
+        benchmarkCopy.innerHTML = linkify(data.explanation ?? "");
         renderLeaderboard();
     } catch (error) {
         leaderboardBody.innerHTML = `<tr><td colspan="4">Could not load leaderboard.</td></tr>`;
@@ -204,6 +204,13 @@ function hideAdvanceBanner() {
 
 function formatNumber(value) {
     return Number(value || 0).toLocaleString();
+}
+
+function linkify(text) {
+    if (!text) return "";
+    // Regular expression to match URLs
+    const urlRegex = /(https?:\/\/[^\s]+)/g;
+    return text.replace(urlRegex, '<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>');
 }
 
 function setupTabs() {

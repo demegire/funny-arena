@@ -197,6 +197,19 @@ tbody tr:nth-child(odd) {
     color: #f4f4f5;
 }
 
+.explanation a {
+    color: #7dd3fc;
+    text-decoration: underline;
+    text-decoration-color: rgba(125, 211, 252, 0.5);
+    transition: color 0.2s, text-decoration-color 0.2s;
+}
+
+.explanation a:hover,
+.explanation a:focus {
+    color: #a5d8f5;
+    text-decoration-color: rgba(125, 211, 252, 0.8);
+}
+
 .arena-header {
     display: flex;
     flex-direction: column;

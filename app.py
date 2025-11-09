@@ -26,8 +26,9 @@ BENCHMARK_EXPLANATION = (
     " Funny Arena pairs two jokes from the same category and lets you decide which model"
     " is funnier. Each click records a head-to-head result, updates the Elo"
     " ratings, and instantly refreshes the leaderboard."
-    " Jokes categories are picked from https://en.wikipedia.org/wiki/Index_of_joke_types."
+    " Jokes categories are picked from https://en.wikipedia.org/wiki/Index_of_joke_types"
     " Jokes were created using Openrouter with the template 'Make a '{category}' joke.'"
+    " Contribute at https://github.com/demegire/funny-arena"
 )
 
 app = Flask(__name__, static_url_path="/funny-arena/static", static_folder="static")
