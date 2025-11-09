@@ -1,0 +1,320 @@
+:root {
+    color-scheme: light dark;
+    font-family: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
+    background-color: #09090b;
+    color: #f4f4f5;
+    --content-width: min(1100px, 92vw);
+    --accent-blue: #7dd3fc;
+    --accent-green: #86efac;
+    --accent-muted: rgba(255, 255, 255, 0.18);
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    background: radial-gradient(circle at top, rgba(255, 255, 255, 0.04), transparent 55%), #09090b;
+    padding: 1.5rem 1.25rem 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+}
+
+@media (max-width: 640px) {
+    body {
+        padding: 1rem 0.75rem 1.5rem;
+    }
+}
+
+.hero,
+main {
+    width: var(--content-width);
+    max-width: 1100px;
+}
+
+.hero {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.hero h1 {
+    margin: 0;
+    font-size: clamp(1.8rem, 3vw, 2.6rem);
+}
+
+.hero p {
+    margin: 0.35rem 0 0;
+    color: #a1a1aa;
+}
+
+.tabs {
+    display: inline-flex;
+    background: #18181b;
+    border-radius: 999px;
+    padding: 0.25rem;
+}
+
+.tab {
+    border: none;
+    background: transparent;
+    color: #a1a1aa;
+    font-weight: 600;
+    padding: 0.35rem 1.2rem;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+}
+
+.tab.active {
+    background: #f4f4f5;
+    color: #0f0f12;
+}
+
+main {
+    display: block;
+}
+
+.panel {
+    background: #121214;
+    border: 1px solid rgba(255, 255, 255, 0.04);
+    border-radius: 1rem;
+    padding: 1.25rem;
+    display: none;
+    min-height: 320px;
+}
+
+.panel.active {
+    display: block;
+}
+
+.leaderboard-meta {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.leaderboard-meta h2 {
+    margin: 0.15rem 0 0;
+    font-size: clamp(1.3rem, 3vw, 1.7rem);
+}
+
+.eyebrow {
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    font-size: 0.75rem;
+    color: #a1a1aa;
+    margin: 0;
+}
+
+.stat-chip {
+    display: flex;
+    flex-direction: column;
+    padding: 0.6rem 1rem;
+    border-radius: 0.85rem;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    min-width: 160px;
+}
+
+.stat-chip span {
+    font-size: 0.8rem;
+    color: #a1a1aa;
+}
+
+.stat-chip strong {
+    font-size: 1.4rem;
+    letter-spacing: 0.04em;
+}
+
+.table-wrapper {
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th,
+td {
+    padding: 0.6rem 0.4rem;
+    text-align: left;
+}
+
+thead {
+    color: #a1a1aa;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+
+tbody tr:nth-child(odd) {
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.explanation {
+    margin-top: 1.25rem;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    color: #a1a1aa;
+    font-size: 0.95rem;
+}
+
+.explanation h3 {
+    margin: 0 0 0.35rem;
+    color: #f4f4f5;
+}
+
+.arena-header {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    margin-bottom: 1rem;
+}
+
+.pill-row {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+}
+
+.pill {
+    --pill-height: 32px;
+    display: inline-flex;
+    align-items: center;
+    align-self: flex-start;
+    padding: 0.25rem 0.8rem;
+    min-height: var(--pill-height);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.08);
+    color: #fff;
+    font-size: 0.85rem;
+    text-transform: capitalize;
+}
+
+.progress-pill {
+    --pill-height: 32px;
+    flex: 1 1 160px;
+    padding: 0;
+    height: var(--pill-height);
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: rgba(255, 255, 255, 0.08);
+    display: inline-flex;
+    align-items: stretch;
+    overflow: hidden;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+}
+
+.progress-pill.active {
+    opacity: 1;
+}
+
+.cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1rem;
+}
+
+.joke-card {
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 0.9rem;
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.02);
+    color: inherit;
+    text-align: center;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: border 0.2s, transform 0.15s, background 0.2s;
+    min-height: 180px;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.joke-card .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.assistant-label {
+    font-size: 0.85rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: #a1a1aa;
+    opacity: 0.9;
+}
+
+.assistant-label.revealed {
+    text-transform: none;
+    letter-spacing: normal;
+    font-weight: 600;
+    color: #fff;
+    opacity: 1;
+}
+
+.joke-card:hover,
+.joke-card:focus-visible {
+    border-color: #f4f4f5;
+    transform: translateY(-2px);
+}
+
+.joke-card.disabled {
+    pointer-events: none;
+    opacity: 0.7;
+}
+
+.joke-card.revealed:not(.selected) {
+    border-color: var(--accent-muted);
+}
+
+.joke-card.selected[data-side="A"] {
+    border-color: var(--accent-blue);
+    box-shadow: 0 0 0 1px rgba(125, 211, 252, 0.3);
+}
+
+.joke-card.selected[data-side="B"] {
+    border-color: var(--accent-green);
+    box-shadow: 0 0 0 1px rgba(134, 239, 172, 0.3);
+}
+
+.placeholder {
+    justify-content: center;
+    color: #a1a1aa;
+}
+
+.progress-pill .progress-bar {
+    flex: 1;
+    position: relative;
+    border-radius: inherit;
+    background: rgba(255, 255, 255, 0.1);
+    overflow: hidden;
+}
+
+.progress-pill .progress-bar span {
+    position: absolute;
+    inset: 0;
+    width: 0%;
+    background: linear-gradient(90deg, #f4f4f5, #c084fc);
+    transition: width 5s linear;
+}
+
+.hidden {
+    display: none !important;
+}

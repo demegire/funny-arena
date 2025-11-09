@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Funny Arena</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body data-base="{{ request.script_root | default('', true) }}">
+    <header class="hero">
+        <div>
+            <h1>Funny Arena</h1>
+            <p>Pick the funnier joke, help find the funniest LLM.</p>
+        </div>
+        <nav class="tabs" role="tablist">
+            <button class="tab active" data-target="leaderboard">Leaderboard</button>
+            <button class="tab" data-target="arena">Arena</button>
+        </nav>
+    </header>
+
+    <main>
+        <section id="leaderboard" class="panel active" role="tabpanel">
+            <div class="leaderboard-meta">
+                <div>
+                    <p class="eyebrow">Live Benchmark</p>
+                    <h2>Leaderboard</h2>
+                </div>
+                <div class="stat-chip">
+                    <span>Total Votes</span>
+                    <strong id="totalVotes">0</strong>
+                </div>
+            </div>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Model</th>
+                            <th>Votes</th>
+                            <th>Elo</th>
+                        </tr>
+                    </thead>
+                    <tbody id="leaderboardBody">
+                        <tr>
+                            <td colspan="4">Loading...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="explanation">
+                <h3>Benchmark Notes</h3>
+                <p id="benchmarkCopy">Refreshing copy...</p>
+            </div>
+        </section>
+
+        <section id="arena" class="panel" role="tabpanel">
+            <div class="arena-header">
+                <div class="pill-row">
+                    <div class="pill" id="categoryPill">Category</div>
+                    <div class="progress-pill" id="progressPill" aria-hidden="true">
+                        <div class="progress-bar">
+                            <span></span>
+                        </div>
+                    </div>
+                </div>
+                <p>Choose the funnier joke. Model identities stay hidden until you decide.</p>
+            </div>
+            <div class="cards" id="jokeCards">
+                <button class="joke-card placeholder">Fetching battle...</button>
+                <button class="joke-card placeholder">Fetching battle...</button>
+            </div>
+        </section>
+    </main>
+
+    <script src="{{ url_for('static', filename='app.js') }}" defer></script>
+</body>
+</html>
